@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>كلمات متقاطعة - فضائل العذراء مريم</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #e3f2fd, #f8bbd9);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #1976d2;
+            margin-bottom: 30px;
+            font-size: 2em;
+        }
+        .crossword-container {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+        .grid-container {
+            flex: 1;
+            min-width: 350px;
+        }
+        .crossword-grid {
+            display: grid;
+            grid-template-columns: repeat(10, 40px);
+            grid-template-rows: repeat(14, 40px);
+            gap: 1px;
+            margin: 20px auto;
+            background: #333;
+            padding: 5px;
+            border-radius: 8px;
+            direction: ltr;
+        }
+        .cell {
+            background: white;
+            border: 1px solid #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 16px;
+            position: relative;
+        }
+        .cell.black {
+            background: #333;
+            border: 1px solid #333;
+        }
+        .cell input {
+            width: 100%;
+            height: 100%;
+            border: none;
+            text-align: center;
+            font-size: 16px;
+            font-weight: bold;
+            background: transparent;
+            outline: none;
+            direction: rtl;
+        }
+        .cell.correct {
+            background: #c8e6c9 !important;
+        }
+        .cell-number {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            font-size: 10px;
+            color: #666;
+            font-weight: bold;
+        }
+        .clues {
+            flex: 1;
+            min-width: 300px;
+        }
+        .clues-section {
+            margin-bottom: 25px;
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 10px;
+        }
+        .clues-section h3 {
+            color: #1976d2;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #1976d2;
+            padding-bottom: 5px;
+        }
+        .clue {
+            margin: 8px 0;
+            padding: 10px;
+            background: white;
+            border-radius: 5px;
+            border-right: 3px solid #1976d2;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+        .buttons {
+            text-align: center;
+            margin-top: 20px;
+        }
+        button {
+            background: linear-gradient(45deg, #1976d2, #42a5f5);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            margin: 5px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: transform 0.2s;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .success-message {
+            text-align: center;
+            color: #2e7d32;
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 20px;
+            display: none;
+        }
+        .verse {
+            text-align: center;
+            font-style: italic;
+            color: #666;
+            margin: 20px 0;
+            padding: 15px;
+            background: #fff3e0;
+            border-radius: 10px;
+            border-right: 4px solid #ff9800;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌹 كلمات متقاطعة - فضائل العذراء مريم 🌹</h1>
+        
+        <div class="verse">
+            "فقالت مريم: ها أنا أمة الرب، ليكن لي كقولك" - لوقا 1:38
+        </div>
+
+        <div class="crossword-container">
+            <div class="grid-container">
+                <div class="crossword-grid" id="crossword-grid"></div>
+                <div class="buttons">
+                    <button onclick="checkAnswers()">تحقق من الإجابات</button>
+                    <button onclick="clearGrid()">مسح الكل</button>
+                    <button onclick="showSolution()">إظهار الحل</button>
+                </div>
+                <div class="success-message" id="success-message">
+                    🎉 أحسنت! لقد أكملت الكلمات المتقاطعة بنجاح! 🎉
+                </div>
+            </div>
+
+            <div class="clues">
+                <div class="clues-section">
+                    <h3>أفقي ←</h3>
+                    <div class="clue">1. ضد الكبرياء، سجدت أمام أليصابات مع أنها أم المسيح (7 أحرف)</div>
+                    <div class="clue">3. فضيلة حفظ اللسان، كانت تحفظ كل شيء في قلبها (4 أحرف)</div>
+                    <div class="clue">5. أن نحتمل البلاء دون تذمر كما فعلت عند الصليب (4 أحرف)</div>
+                    <div class="clue">7. قبول مشيئة الله بفرح، "نعم يا رب" (4 أحرف)</div>
+                    <div class="clue">9. ما قدمته للمجوس والرعاة بكل محبة (5 أحرف)</div>
+                </div>
+
+                <div class="clues-section">
+                    <h3>عمودي ↓</h3>
+                    <div class="clue">2. ما أظهرته عندما قالت "ليكن لي كقولك" (7 أحرف)</div>
+                    <div class="clue">4. الثقة الكاملة التي جعلتها تقول "هوذا أنا أمة الرب" (6 أحرف)</div>
+                    <div class="clue">6. تحمل ألم فقدان يسوع ثلاثة أيام وألم الصليب (8 أحرف)</div>
+                    <div class="clue">8. الثبات والاستمرار في الإيمان رغم كل المحن (6 أحرف)</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const gridSize = 9;
+        
+        // Define the crossword layout
+        const crosswordData = [
+            ['1', 'ا', 'ل', 'ا', 'ت', 'ض', 'ا', 'ع', 'B'],
+            ['B', 'ل', 'B', 'B', 'B', 'B', 'B', 'B', 'B'],
+            ['B', '2', 'ت', 'س', 'ل', 'ي', 'م', 'B', 'B'],
+            ['B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B'],
+            ['3', 'ص', 'م', 'ت', 'B', '4', 'ا', 'ي', 'م'],
+            ['B', 'B', 'B', 'B', 'B', 'B', 'ا', 'B', 'ا'],
+            ['5', 'ص', 'ب', 'ر', 'B', '6', 'ا', 'ل', 'ن'],
+            ['B', 'B', 'B', 'B', 'B', 'ح', 'B', 'B', 'B'],
+            ['7', 'ر', 'ض', 'ا', 'B', 'ت', 'B', '8', 'م'],
+            ['B', 'B', 'B', 'B', 'B', 'م', 'B', 'ث', 'B'],
+            ['B', 'B', 'B', 'B', 'B', 'ا', 'B', 'ا', 'B'],
+            ['B', 'B', 'B', 'B', 'B', 'ل', 'B', 'ب', 'B'],
+            ['9', 'خ', 'د', 'م', 'ه', 'B', 'B', 'ر', 'ه']
+        ];
+
+        // Simplified layout for 9x9 grid
+        const answers = {
+            1: {word: 'الاتضاع', startRow: 0, startCol: 0, direction: 'horizontal'},
+            2: {word: 'التسليم', startRow: 2, startCol: 1, direction: 'horizontal'},
+            3: {word: 'صمت', startRow: 4, startCol: 0, direction: 'horizontal'},
+            4: {word: 'ايمان', startRow: 4, startCol: 5, direction: 'horizontal'},
+            5: {word: 'صبر', startRow: 6, startCol: 0, direction: 'horizontal'},
+            6: {word: 'الاحتمال', startRow: 6, startCol: 5, direction: 'vertical'},
+            7: {word: 'رضا', startRow: 8, startCol: 0, direction: 'horizontal'},
+            8: {word: 'مثابره', startRow: 8, startCol: 7, direction: 'vertical'},
+            9: {word: 'خدمه', startRow: 12, startCol: 0, direction: 'horizontal'}
+        };
+
+        function createSimpleGrid() {
+            const grid = document.getElementById('crossword-grid');
+            grid.style.gridTemplateColumns = 'repeat(10, 40px)';
+            grid.style.gridTemplateRows = 'repeat(14, 40px)';
+            
+            // Corrected 10x14 grid with proper intersecting words
+            const layout = [
+                [1, 'ا', 'ل', 'ا', 'ت', 'ض', 'ا', 'ع', 'B', 'B'],
+                ['B', '2', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B'],
+                ['B', 'ت', 'B', 3, 'ص', 'م', 'ت', 'B', 'B', 'B'],
+                ['B', 'س', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B'],
+                ['B', 'ل', 'B', 'B', 5, 'ص', 'ب', 'ر', 'B', 'B'],
+                ['B', 'ي', 'B', 4, 'ا', 'ي', 'م', 'ا', 'ن', 'B'],
+                ['B', 'م', 'B', 'B', 'ل', 'B', 'B', 'B', 'B', 'B'],
+                ['B', 'B', 'B', 'B', 'ا', 'B', 7, 'ر', 'ض', 'ا'],
+                ['B', 'B', 'B', 'B', 'ح', 'B', 'B', 'B', 'B', 'B'],
+                [9, 'خ', 'د', 'م', 'ت', 'B', 8, 'م', 'ث', 'ا'],
+                ['B', 'B', 'B', 'B', 'م', 'B', 'B', 'B', 'ا', 'B'],
+                ['B', 'B', 'B', 'B', 'ا', 'B', 'B', 'B', 'ب', 'B'],
+                ['B', 'B', 'B', 'B', 'ل', 'B', 'B', 'B', 'ر', 'B'],
+                ['B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'ه', 'B']
+            ];
+
+            // Map of cells with numbers and their positions
+            const numberedCells = {
+                '0-0': 1,    // الاتضاع - أفقي
+                '1-1': 2,    // التسليم - عمودي  
+                '2-3': 3,    // صمت - أفقي
+                '5-3': 4,    // ايمان - أفقي
+                '4-4': 5,    // صبر - أفقي
+                '9-6': 8,    // مثابره - عمودي
+                '6-6': 7,    // رضا - أفقي
+                '9-0': 9     // خدمه - أفقي
+            };
+
+            layout.forEach((row, rowIndex) => {
+                row.forEach((cell, colIndex) => {
+                    const cellDiv = document.createElement('div');
+                    const cellKey = `${rowIndex}-${colIndex}`;
+                    
+                    if (cell === 'B') {
+                        cellDiv.className = 'cell black';
+                    } else {
+                        cellDiv.className = 'cell';
+                        const input = document.createElement('input');
+                        input.type = 'text';
+                        input.maxLength = 1;
+                        
+                        // Check if this cell should have a number
+                        if (numberedCells[cellKey]) {
+                            const numberDiv = document.createElement('div');
+                            numberDiv.className = 'cell-number';
+                            numberDiv.textContent = numberedCells[cellKey];
+                            cellDiv.appendChild(numberDiv);
+                        }
+                        
+                        if (typeof cell === 'number') {
+                            input.dataset.correctLetter = '';
+                        } else {
+                            input.dataset.correctLetter = cell;
+                        }
+                        
+                        input.addEventListener('input', function() {
+                            this.value = this.value.replace(/[^ا-ي]/g, '');
+                        });
+                        
+                        cellDiv.appendChild(input);
+                    }
+                    
+                    grid.appendChild(cellDiv);
+                });
+            });
+        }
+
+        function checkAnswers() {
+            const inputs = document.querySelectorAll('.cell input');
+            let correctCount = 0;
+            let totalCount = 0;
+            
+            inputs.forEach(input => {
+                const correctLetter = input.dataset.correctLetter;
+                if (correctLetter && correctLetter !== '') {
+                    totalCount++;
+                    const userLetter = input.value.trim();
+                    const cell = input.parentElement;
+                    
+                    if (userLetter === correctLetter) {
+                        cell.classList.add('correct');
+                        correctCount++;
+                    } else {
+                        cell.classList.remove('correct');
+                    }
+                }
+            });
+            
+            if (correctCount === totalCount && totalCount > 0) {
+                document.getElementById('success-message').style.display = 'block';
+            } else {
+                document.getElementById('success-message').style.display = 'none';
+            }
+        }
+
+        function clearGrid() {
+            const inputs = document.querySelectorAll('.cell input');
+            inputs.forEach(input => {
+                if (input.dataset.correctLetter !== '') {
+                    input.value = '';
+                    input.parentElement.classList.remove('correct');
+                }
+            });
+            document.getElementById('success-message').style.display = 'none';
+        }
+
+        function showSolution() {
+            const inputs = document.querySelectorAll('.cell input');
+            inputs.forEach(input => {
+                const correctLetter = input.dataset.correctLetter;
+                if (correctLetter && correctLetter !== '') {
+                    input.value = correctLetter;
+                    input.parentElement.classList.add('correct');
+                }
+            });
+            document.getElementById('success-message').style.display = 'block';
+        }
+
+        // Initialize the grid
+        createSimpleGrid();
+    </script>
+</body>
+</html>

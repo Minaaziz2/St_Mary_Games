@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>البحث عن فضائل العذراء مريم</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #e3f2fd, #f8bbd9);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            padding: 25px;
+        }
+        h1 {
+            text-align: center;
+            color: #1976d2;
+            margin-bottom: 20px;
+            font-size: 2.2em;
+        }
+        .game-container {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .grid-container {
+            flex: 1;
+            min-width: 500px;
+            max-width: 600px;
+        }
+        .word-grid {
+            display: grid;
+            grid-template-columns: repeat(15, 35px);
+            grid-template-rows: repeat(15, 35px);
+            gap: 2px;
+            margin: 20px auto;
+            background: #333;
+            padding: 8px;
+            border-radius: 10px;
+            direction: ltr;
+        }
+        .grid-cell {
+            background: white;
+            border: 2px solid #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+            user-select: none;
+            border-radius: 4px;
+        }
+        .grid-cell:hover {
+            background: #e3f2fd;
+            transform: scale(1.1);
+        }
+        .grid-cell.selected {
+            background: #ffeb3b !important;
+            border-color: #ff9800;
+            transform: scale(1.05);
+        }
+        .grid-cell.found-0 { background: #e91e63 !important; color: white; border-color: #ad1457; }
+        .grid-cell.found-1 { background: #9c27b0 !important; color: white; border-color: #6a1b9a; }
+        .grid-cell.found-2 { background: #3f51b5 !important; color: white; border-color: #283593; }
+        .grid-cell.found-3 { background: #2196f3 !important; color: white; border-color: #1565c0; }
+        .grid-cell.found-4 { background: #00bcd4 !important; color: white; border-color: #00838f; }
+        .grid-cell.found-5 { background: #4caf50 !important; color: white; border-color: #2e7d32; }
+        .grid-cell.found-6 { background: #8bc34a !important; color: white; border-color: #558b2f; }
+        .grid-cell.found-7 { background: #ff9800 !important; color: white; border-color: #ef6c00; }
+        .grid-cell.found-8 { background: #f44336 !important; color: white; border-color: #c62828; }
+        .grid-cell.hint-cell {
+            background: #ffeb3b !important;
+            border-color: #ff9800 !important;
+            box-shadow: 0 0 15px #ffeb3b;
+            animation: pulse 2s infinite;
+        }
+        .words-list {
+            flex: 1;
+            min-width: 300px;
+            max-width: 350px;
+        }
+        .words-section {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .words-section h3 {
+            color: #1976d2;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #1976d2;
+            padding-bottom: 8px;
+            text-align: center;
+        }
+        .word-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 12px 0;
+            padding: 12px;
+            background: white;
+            border-radius: 8px;
+            border-right: 4px solid #1976d2;
+            transition: all 0.3s;
+        }
+        .word-item.found-0 { background: #fce4ec; border-right-color: #e91e63; text-decoration: line-through; }
+        .word-item.found-1 { background: #f3e5f5; border-right-color: #9c27b0; text-decoration: line-through; }
+        .word-item.found-2 { background: #e8eaf6; border-right-color: #3f51b5; text-decoration: line-through; }
+        .word-item.found-3 { background: #e3f2fd; border-right-color: #2196f3; text-decoration: line-through; }
+        .word-item.found-4 { background: #e0f2f1; border-right-color: #00bcd4; text-decoration: line-through; }
+        .word-item.found-5 { background: #e8f5e8; border-right-color: #4caf50; text-decoration: line-through; }
+        .word-item.found-6 { background: #f1f8e9; border-right-color: #8bc34a; text-decoration: line-through; }
+        .word-item.found-7 { background: #fff3e0; border-right-color: #ff9800; text-decoration: line-through; }
+        .word-item.found-8 { background: #ffebee; border-right-color: #f44336; text-decoration: line-through; }
+        .word-text {
+            font-weight: bold;
+            font-size: 16px;
+        }
+        .word-hint {
+            font-size: 12px;
+            color: #666;
+            margin-top: 4px;
+            line-height: 1.3;
+        }
+        .check-mark {
+            color: #4caf50;
+            font-size: 20px;
+            display: none;
+        }
+        .word-item.found-0 .check-mark,
+        .word-item.found-1 .check-mark,
+        .word-item.found-2 .check-mark,
+        .word-item.found-3 .check-mark,
+        .word-item.found-4 .check-mark,
+        .word-item.found-5 .check-mark,
+        .word-item.found-6 .check-mark,
+        .word-item.found-7 .check-mark,
+        .word-item.found-8 .check-mark {
+            display: block;
+        }
+        .controls {
+            text-align: center;
+            margin: 20px 0;
+        }
+        button {
+            background: linear-gradient(45deg, #1976d2, #42a5f5);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            margin: 8px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: transform 0.2s;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .progress {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(45deg, #4caf50, #81c784);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+        .verse {
+            text-align: center;
+            font-style: italic;
+            color: #666;
+            margin: 15px 0;
+            padding: 15px;
+            background: #fff3e0;
+            border-radius: 10px;
+            border-right: 4px solid #ff9800;
+        }
+        .success-message {
+            text-align: center;
+            color: #2e7d32;
+            font-size: 20px;
+            font-weight: bold;
+            margin: 20px 0;
+            display: none;
+            padding: 20px;
+            background: #e8f5e8;
+            border-radius: 10px;
+            border: 2px solid #4caf50;
+        }
+        .instructions {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+            border-right: 4px solid #1976d2;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 البحث عن فضائل العذراء مريم 🌹</h1>
+        
+        <div class="verse">
+            "فقالت مريم: ها أنا أمة الرب، ليكن لي كقولك" - لوقا 1:38
+        </div>
+
+        <div class="instructions">
+            <strong>طريقة اللعب:</strong> ابحث عن الكلمات المخفية في الشبكة - يمكن أن تكون أفقية، عمودية، أو مائلة!<br>
+            اضغط واسحب لتحديد الكلمة
+        </div>
+
+        <div class="progress">
+            <div>تقدمك: <span id="progress-text">0 من 9</span></div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+        </div>
+
+        <div class="game-container">
+            <div class="grid-container">
+                <div class="word-grid" id="word-grid"></div>
+                <div class="controls">
+                    <button onclick="clearSelection()">مسح التحديد</button>
+                    <button onclick="showHint()">تلميح</button>
+                    <button onclick="showAllSolutions()">إظهار الحل</button>
+                    <button onclick="testWordDetection()">اختبار الكلمات</button>
+                    <button onclick="newGame()">لعبة جديدة</button>
+                </div>
+                <div class="success-message" id="success-message">
+                    🎉 مبارك! لقد وجدت جميع فضائل العذراء مريم! 🎉<br>
+                    <small>لقد تأملت في صفات أم الرب الجميلة</small>
+                </div>
+            </div>
+
+            <div class="words-list">
+                <div class="words-section">
+                    <h3>🌟 فضائل العذراء مريم 🌟</h3>
+                    <div id="words-container"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var GRID_SIZE = 15;
+        var grid = [];
+        var foundWords = [];
+        var isSelecting = false;
+        var selectedCells = [];
+        var startCell = null;
+        var placedWords = [];
+
+        var wordsToFind = [
+            {
+                word: 'الاتضاع',
+                hint: 'ضد الكبرياء، سجدت أمام أليصابات مع أنها أم المسيح'
+            },
+            {
+                word: 'التسليم',
+                hint: 'ما أظهرته عندما قالت "ليكن لي كقولك"'
+            },
+            {
+                word: 'الصمت',
+                hint: 'فضيلة حفظ اللسان، كانت تحفظ كل شيء في قلبها'
+            },
+            {
+                word: 'الايمان',
+                hint: 'الثقة الكاملة التي جعلتها تقول "هوذا أنا أمة الرب"'
+            },
+            {
+                word: 'الصبر',
+                hint: 'أن نحتمل البلاء دون تذمر كما فعلت عند الصليب'
+            },
+            {
+                word: 'الاحتمال',
+                hint: 'تحمل ألم فقدان يسوع ثلاثة أيام وألم الصليب'
+            },
+            {
+                word: 'الرضا',
+                hint: 'قبول مشيئة الله بفرح، "نعم يا رب"'
+            },
+            {
+                word: 'الخدمة',
+                hint: 'ما قدمته للمجوس والرعاة بكل محبة'
+            },
+            {
+                word: 'المثابرة',
+                hint: 'الثبات والاستمرار في الإيمان رغم كل المحن'
+            }
+        ];
+
+        var arabicLetters = ['ا', 'ب', 'ت', 'ث', 'ج', 'ح', 'خ', 'د', 'ذ', 'ر', 'ز', 'س', 'ش', 'ص', 'ض', 'ط', 'ظ', 'ع', 'غ', 'ف', 'ق', 'ك', 'ل', 'م', 'ن', 'ه', 'و', 'ي'];
+
+        function initializeGrid() {
+            grid = [];
+            foundWords = [];
+            placedWords = [];
+            
+            for (var i = 0; i < GRID_SIZE; i++) {
+                grid[i] = [];
+                for (var j = 0; j < GRID_SIZE; j++) {
+                    grid[i][j] = '';
+                }
+            }
+            
+            // Place words with multiple attempts
+            var placedCount = 0;
+            var maxAttempts = 50;
+            var attempt = 0;
+            
+            while (placedCount < wordsToFind.length && attempt < maxAttempts) {
+                // Reset grid for this attempt
+                for (var i = 0; i < GRID_SIZE; i++) {
+                    for (var j = 0; j < GRID_SIZE; j++) {
+                        grid[i][j] = '';
+                    }
+                }
+                placedWords = [];
+                placedCount = 0;
+                
+                // Try to place all words
+                for (var i = 0; i < wordsToFind.length; i++) {
+                    if (placeWordInGrid(wordsToFind[i].word, i)) {
+                        placedCount++;
+                    }
+                }
+                attempt++;
+            }
+            
+            console.log('Placed ' + placedCount + ' out of ' + wordsToFind.length + ' words');
+            
+            // Log placed words for debugging
+            for (var i = 0; i < placedWords.length; i++) {
+                var pw = placedWords[i];
+                console.log('Placed "' + pw.word + '" at (' + pw.startRow + ',' + pw.startCol + ') direction [' + pw.direction[0] + ',' + pw.direction[1] + ']');
+            }
+            
+            // Fill empty cells
+            for (var i = 0; i < GRID_SIZE; i++) {
+                for (var j = 0; j < GRID_SIZE; j++) {
+                    if (grid[i][j] === '') {
+                        grid[i][j] = arabicLetters[Math.floor(Math.random() * arabicLetters.length)];
+                    }
+                }
+            }
+        }
+
+        function placeWordInGrid(word, wordIndex) {
+            var directions = [
+                [0, 1], [1, 0], [1, 1], [1, -1],
+                [0, -1], [-1, 0], [-1, -1], [-1, 1]
+            ];
+
+            for (var attempt = 0; attempt < 100; attempt++) {
+                var direction = directions[Math.floor(Math.random() * directions.length)];
+                var startRow = Math.floor(Math.random() * GRID_SIZE);
+                var startCol = Math.floor(Math.random() * GRID_SIZE);
+
+                if (canPlaceWord(word, startRow, startCol, direction)) {
+                    placeWord(word, startRow, startCol, direction);
+                    placedWords.push({
+                        word: word,
+                        startRow: startRow,
+                        startCol: startCol,
+                        direction: direction,
+                        wordIndex: wordIndex
+                    });
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        function canPlaceWord(word, startRow, startCol, direction) {
+            for (var i = 0; i < word.length; i++) {
+                var row = startRow + direction[0] * i;
+                var col = startCol + direction[1] * i;
+
+                if (row < 0 || row >= GRID_SIZE || col < 0 || col >= GRID_SIZE) {
+                    return false;
+                }
+
+                if (grid[row][col] !== '' && grid[row][col] !== word[i]) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        function placeWord(word, startRow, startCol, direction) {
+            // For Arabic text, we need to be careful about character order
+            console.log('Placing word "' + word + '" at (' + startRow + ',' + startCol + ') direction [' + direction[0] + ',' + direction[1] + ']');
+            
+            for (var i = 0; i < word.length; i++) {
+                var row = startRow + direction[0] * i;
+                var col = startCol + direction[1] * i;
+                grid[row][col] = word[i];
+                console.log('  Position (' + row + ',' + col + ') = "' + word[i] + '"');
+            }
+            
+            // Verify the word is placed correctly by reading it back
+            var readBack = '';
+            for (var i = 0; i < word.length; i++) {
+                var row = startRow + direction[0] * i;
+                var col = startCol + direction[1] * i;
+                readBack += grid[row][col];
+            }
+            console.log('  Word placed as: "' + readBack + '"');
+            console.log('  Original word:  "' + word + '"');
+            console.log('  Match: ' + (readBack === word));
+        }
+
+        function createGrid() {
+            var gridElement = document.getElementById('word-grid');
+            gridElement.innerHTML = '';
+
+            for (var i = 0; i < GRID_SIZE; i++) {
+                for (var j = 0; j < GRID_SIZE; j++) {
+                    var cell = document.createElement('div');
+                    cell.className = 'grid-cell';
+                    cell.textContent = grid[i][j];
+                    cell.setAttribute('data-row', i);
+                    cell.setAttribute('data-col', j);
+                    
+                    cell.onmousedown = startSelection;
+                    cell.onmouseenter = continueSelection;
+                    cell.onmouseup = endSelection;
+                    
+                    gridElement.appendChild(cell);
+                }
+            }
+        }
+
+        function createWordsList() {
+            var container = document.getElementById('words-container');
+            container.innerHTML = '';
+
+            for (var i = 0; i < wordsToFind.length; i++) {
+                var wordItem = document.createElement('div');
+                wordItem.className = 'word-item';
+                wordItem.id = 'word-' + i;
+                
+                wordItem.innerHTML = '<div><div class="word-text">' + wordsToFind[i].word + '</div><div class="word-hint">' + wordsToFind[i].hint + '</div></div><div class="check-mark">✓</div>';
+                
+                container.appendChild(wordItem);
+            }
+        }
+
+        function startSelection(e) {
+            isSelecting = true;
+            selectedCells = [];
+            startCell = { 
+                row: parseInt(e.target.getAttribute('data-row')), 
+                col: parseInt(e.target.getAttribute('data-col')) 
+            };
+            selectCell(e.target);
+        }
+
+        function continueSelection(e) {
+            if (!isSelecting) return;
+            
+            var currentCell = { 
+                row: parseInt(e.target.getAttribute('data-row')), 
+                col: parseInt(e.target.getAttribute('data-col')) 
+            };
+            
+            clearCurrentSelection();
+            selectedCells = getCellsInLine(startCell, currentCell);
+            
+            for (var i = 0; i < selectedCells.length; i++) {
+                var cellElement = document.querySelector('[data-row="' + selectedCells[i].row + '"][data-col="' + selectedCells[i].col + '"]');
+                if (cellElement) selectCell(cellElement);
+            }
+        }
+
+        function endSelection() {
+            if (!isSelecting) return;
+            isSelecting = false;
+            
+            if (selectedCells.length > 0) {
+                var selectedWord = '';
+                console.log('=== BUILDING SELECTED WORD ===');
+                console.log('Selected cells:');
+                for (var i = 0; i < selectedCells.length; i++) {
+                    var cell = selectedCells[i];
+                    var letter = grid[cell.row][cell.col];
+                    selectedWord += letter;
+                    console.log('  Cell (' + cell.row + ',' + cell.col + ') = "' + letter + '"');
+                }
+                console.log('Final selected word: "' + selectedWord + '"');
+                
+                // Add visual feedback before checking
+                for (var i = 0; i < selectedCells.length; i++) {
+                    var cell = selectedCells[i];
+                    var cellElement = document.querySelector('[data-row="' + cell.row + '"][data-col="' + cell.col + '"]');
+                    if (cellElement) {
+                        cellElement.style.backgroundColor = '#ffeb3b';
+                        cellElement.style.transform = 'scale(1.1)';
+                    }
+                }
+                
+                checkWord(selectedWord);
+            }
+            
+            setTimeout(function() {
+                clearCurrentSelection();
+                
+                // Reset any temporary styling
+                for (var i = 0; i < selectedCells.length; i++) {
+                    var cell = selectedCells[i];
+                    var cellElement = document.querySelector('[data-row="' + cell.row + '"][data-col="' + cell.col + '"]');
+                    if (cellElement && !cellElement.className.match(/found-\d/)) {
+                        cellElement.style.backgroundColor = '';
+                        cellElement.style.transform = '';
+                    }
+                }
+            }, 500);
+        }
+
+        function getCellsInLine(start, end) {
+            var cells = [];
+            var rowDiff = end.row - start.row;
+            var colDiff = end.col - start.col;
+            var distance = Math.max(Math.abs(rowDiff), Math.abs(colDiff));
+            
+            if (distance === 0) {
+                return [start];
+            }
+            
+            if (Math.abs(rowDiff) !== 0 && Math.abs(colDiff) !== 0 && Math.abs(rowDiff) !== Math.abs(colDiff)) {
+                return [start];
+            }
+            
+            var rowStep = rowDiff === 0 ? 0 : rowDiff / distance;
+            var colStep = colDiff === 0 ? 0 : colDiff / distance;
+            
+            for (var i = 0; i <= distance; i++) {
+                cells.push({
+                    row: start.row + Math.round(rowStep * i),
+                    col: start.col + Math.round(colStep * i)
+                });
+            }
+            
+            return cells;
+        }
+
+        function selectCell(cell) {
+            cell.className = cell.className + ' selected';
+        }
+
+        function clearCurrentSelection() {
+            var selectedElements = document.querySelectorAll('.grid-cell.selected');
+            for (var i = 0; i < selectedElements.length; i++) {
+                selectedElements[i].className = selectedElements[i].className.replace(' selected', '');
+            }
+        }
+
+        // Add a test function to manually test word detection
+        function testWordDetection() {
+            console.log('=== TESTING WORD DETECTION ===');
+            
+            // Test with the first placed word
+            if (placedWords.length > 0) {
+                var testWord = placedWords[0];
+                console.log('Testing with: ' + testWord.word);
+                
+                // Manually build the word from grid
+                var builtWord = '';
+                for (var i = 0; i < testWord.word.length; i++) {
+                    var row = testWord.startRow + testWord.direction[0] * i;
+                    var col = testWord.startCol + testWord.direction[1] * i;
+                    builtWord += grid[row][col];
+                }
+                
+                console.log('Built from grid: "' + builtWord + '"');
+                console.log('Original word: "' + testWord.word + '"');
+                console.log('Are they equal?', builtWord === testWord.word);
+                
+                // Check character by character
+                for (var i = 0; i < Math.min(builtWord.length, testWord.word.length); i++) {
+                    console.log('Char ' + i + ': "' + builtWord[i] + '" vs "' + testWord.word[i] + '" equal=' + (builtWord[i] === testWord.word[i]));
+                }
+            }
+        }
+
+        function checkWord(selectedWord) {
+            var reverseWord = selectedWord.split('').reverse().join('');
+            
+            console.log('=== WORD CHECK DEBUG ===');
+            console.log('Selected word: "' + selectedWord + '" (length: ' + selectedWord.length + ')');
+            console.log('Reverse word: "' + reverseWord + '" (length: ' + reverseWord.length + ')');
+            
+            // Show character codes for debugging
+            var selectedCodes = '';
+            for (var k = 0; k < selectedWord.length; k++) {
+                selectedCodes += selectedWord.charCodeAt(k) + ',';
+            }
+            console.log('Selected word char codes: [' + selectedCodes + ']');
+            
+            for (var i = 0; i < wordsToFind.length; i++) {
+                var wordObj = wordsToFind[i];
+                var targetWord = wordObj.word;
+                
+                // Show character codes for target word
+                var targetCodes = '';
+                for (var k = 0; k < targetWord.length; k++) {
+                    targetCodes += targetWord.charCodeAt(k) + ',';
+                }
+                
+                console.log('Checking against: "' + targetWord + '" (length: ' + targetWord.length + ')');
+                console.log('Target word char codes: [' + targetCodes + ']');
+                
+                var alreadyFound = false;
+                for (var j = 0; j < foundWords.length; j++) {
+                    if (foundWords[j] === targetWord) {
+                        alreadyFound = true;
+                        break;
+                    }
+                }
+                
+                var isMatch = (selectedWord === targetWord || reverseWord === targetWord);
+                console.log('Is match? ' + isMatch + ' (already found: ' + alreadyFound + ')');
+                
+                if (isMatch && !alreadyFound) {
+                    console.log('*** FOUND MATCH: ' + targetWord + ' ***');
+                    foundWords.push(targetWord);
+                    markWordAsFound(i);
+                    markCellsAsFound(i);
+                    updateProgress();
+                    
+                    // Flash the cells to show success
+                    for (var k = 0; k < selectedCells.length; k++) {
+                        var cell = selectedCells[k];
+                        var cellElement = document.querySelector('[data-row="' + cell.row + '"][data-col="' + cell.col + '"]');
+                        if (cellElement) {
+                            cellElement.style.border = '3px solid #4caf50';
+                            setTimeout(function(elem) {
+                                return function() {
+                                    elem.style.border = '';
+                                };
+                            }(cellElement), 1000);
+                        }
+                    }
+                    
+                    if (foundWords.length === wordsToFind.length) {
+                        setTimeout(function() {
+                            document.getElementById('success-message').style.display = 'block';
+                        }, 500);
+                    }
+                    return;
+                }
+            }
+            
+            console.log('*** No match found for: "' + selectedWord + '" ***');
+        }
+
+        function markWordAsFound(index) {
+            var wordElement = document.getElementById('word-' + index);
+            if (wordElement) {
+                wordElement.className = wordElement.className + ' found-' + index;
+            }
+        }
+
+        function markCellsAsFound(wordIndex) {
+            for (var i = 0; i < selectedCells.length; i++) {
+                var cell = selectedCells[i];
+                var cellElement = document.querySelector('[data-row="' + cell.row + '"][data-col="' + cell.col + '"]');
+                if (cellElement) {
+                    for (var j = 0; j < 9; j++) {
+                        cellElement.className = cellElement.className.replace(' found-' + j, '');
+                    }
+                    cellElement.className = cellElement.className + ' found-' + wordIndex;
+                    cellElement.className = cellElement.className.replace(' selected', '');
+                }
+            }
+        }
+
+        function updateProgress() {
+            var progressText = document.getElementById('progress-text');
+            var progressFill = document.getElementById('progress-fill');
+            
+            if (progressText) {
+                progressText.textContent = foundWords.length + ' من ' + wordsToFind.length;
+            }
+            
+            if (progressFill) {
+                var percentage = (foundWords.length / wordsToFind.length) * 100;
+                progressFill.style.width = percentage + '%';
+            }
+        }
+
+        function clearSelection() {
+            clearCurrentSelection();
+            selectedCells = [];
+            isSelecting = false;
+        }
+
+        function showHint() {
+            if (foundWords.length === wordsToFind.length) {
+                alert('تم العثور على جميع الكلمات! 🎉');
+                return;
+            }
+            
+            var unfoundWord = null;
+            for (var i = 0; i < wordsToFind.length; i++) {
+                var found = false;
+                for (var j = 0; j < foundWords.length; j++) {
+                    if (foundWords[j] === wordsToFind[i].word) {
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) {
+                    unfoundWord = wordsToFind[i];
+                    break;
+                }
+            }
+            
+            if (!unfoundWord) return;
+            
+            var wordData = null;
+            for (var i = 0; i < placedWords.length; i++) {
+                if (placedWords[i].word === unfoundWord.word) {
+                    wordData = placedWords[i];
+                    break;
+                }
+            }
+            
+            if (wordData) {
+                var randomIndex = Math.floor(Math.random() * wordData.word.length);
+                var hintRow = wordData.startRow + wordData.direction[0] * randomIndex;
+                var hintCol = wordData.startCol + wordData.direction[1] * randomIndex;
+                
+                var hintCell = document.querySelector('[data-row="' + hintRow + '"][data-col="' + hintCol + '"]');
+                if (hintCell) {
+                    var prevHints = document.querySelectorAll('.grid-cell.hint-cell');
+                    for (var i = 0; i < prevHints.length; i++) {
+                        prevHints[i].className = prevHints[i].className.replace(' hint-cell', '');
+                    }
+                    
+                    hintCell.className = hintCell.className + ' hint-cell';
+                    
+                    setTimeout(function() {
+                        hintCell.className = hintCell.className.replace(' hint-cell', '');
+                    }, 4000);
+                }
+            }
+        }
+
+        function showAllSolutions() {
+            clearSelection();
+            
+            for (var i = 0; i < wordsToFind.length; i++) {
+                var wordObj = wordsToFind[i];
+                var alreadyFound = false;
+                for (var j = 0; j < foundWords.length; j++) {
+                    if (foundWords[j] === wordObj.word) {
+                        alreadyFound = true;
+                        break;
+                    }
+                }
+                if (!alreadyFound) {
+                    foundWords.push(wordObj.word);
+                }
+                markWordAsFound(i);
+            }
+            
+            for (var i = 0; i < placedWords.length; i++) {
+                var wordData = placedWords[i];
+                var wordIndex = wordData.wordIndex;
+                for (var j = 0; j < wordData.word.length; j++) {
+                    var row = wordData.startRow + wordData.direction[0] * j;
+                    var col = wordData.startCol + wordData.direction[1] * j;
+                    var cell = document.querySelector('[data-row="' + row + '"][data-col="' + col + '"]');
+                    if (cell) {
+                        for (var k = 0; k < 9; k++) {
+                            cell.className = cell.className.replace(' found-' + k, '');
+                        }
+                        cell.className = cell.className + ' found-' + wordIndex;
+                    }
+                }
+            }
+            
+            updateProgress();
+            
+            setTimeout(function() {
+                document.getElementById('success-message').style.display = 'block';
+            }, 500);
+        }
+
+        function newGame() {
+            document.getElementById('success-message').style.display = 'none';
+            
+            for (var i = 0; i < 9; i++) {
+                var foundCells = document.querySelectorAll('.grid-cell.found-' + i);
+                for (var j = 0; j < foundCells.length; j++) {
+                    foundCells[j].className = foundCells[j].className.replace(' found-' + i, '');
+                }
+                
+                var foundItems = document.querySelectorAll('.word-item.found-' + i);
+                for (var j = 0; j < foundItems.length; j++) {
+                    foundItems[j].className = foundItems[j].className.replace(' found-' + i, '');
+                }
+            }
+            
+            foundWords = [];
+            initializeGrid();
+            createGrid();
+            createWordsList();
+            updateProgress();
+        }
+
+        // Prevent text selection
+        document.onselectstart = function() { return false; };
+
+        // Initialize game
+        initializeGrid();
+        createGrid();
+        createWordsList();
+        updateProgress();
+    </script>
+</body>
+</html>
